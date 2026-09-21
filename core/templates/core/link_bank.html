@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% block title %}Link Bank Account – LuminaBank{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="dashboard-card">
+                    <h2 class="section-title mb-1">Link a Bank Account</h2>
+                    <p class="text-muted small mb-4">
+                        Add an external bank account to withdraw funds or receive financial aid via direct deposit.
+                    </p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Bank Name *</label>
+                            {{ form.bank_name }}
+                            {% if form.bank_name.errors %}<div class="text-danger small">{{ form.bank_name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Routing Number *</label>
+                            {{ form.routing_number }}
+                            {% if form.routing_number.errors %}<div class="text-danger small">{{ form.routing_number.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Account Number *</label>
+                            {{ form.account_number }}
+                            {% if form.account_number.errors %}<div class="text-danger small">{{ form.account_number.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Account Type *</label>
+                            {{ form.account_type }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nickname (optional)</label>
+                            {{ form.nickname }}
+                        </div>
+                        <div class="mb-4 form-check">
+                            {{ form.is_primary }}
+                            <label class="form-check-label" for="{{ form.is_primary.id_for_label }}">
+                                Set as primary account
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Link Bank Account</button>
+                        <a href="{% url 'withdraw' %}" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
+                    </form>
+                </div>
+                <div class="alert alert-light border mt-3 small">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Your bank details are encrypted and stored securely. We recommend using instant verification services (such as Plaid) in production deployments.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

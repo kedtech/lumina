@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+{% block title %}Financial Aid Refund Preference – LuminaBank{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <h1 class="section-title mb-2">Financial Aid Refund Preference</h1>
+                <p class="text-muted mb-4">
+                    Choose where your school should send financial aid refunds. You can change this anytime.
+                </p>
+
+                <div class="dashboard-card">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block mb-3">{{ form.refund_preference.label }}</label>
+                            {% for radio in form.refund_preference %}
+                            <div class="form-check mb-2">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                    {{ radio.choice_label }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                            {% if form.refund_preference.errors %}
+                                <div class="text-danger small">{{ form.refund_preference.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4" id="external-bank-section">
+                            <label class="form-label fw-semibold">{{ form.preferred_external_bank.label }}</label>
+                            {{ form.preferred_external_bank }}
+                            {% if form.preferred_external_bank.errors %}
+                                <div class="text-danger small">{{ form.preferred_external_bank.errors.0 }}</div>
+                            {% endif %}
+                            {% if not linked_banks %}
+                            <div class="form-text text-warning">
+                                You have no linked bank accounts.
+                                <a href="{% url 'link_bank' %}">Link one first</a> if you want direct deposit.
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-primary w-100">Save Preference</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 mt-2">Cancel</a>
+                    </form>
+                </div>
+
+                <div class="dashboard-card bg-light mt-3">
+                    <h6 class="fw-bold">Current Setting</h6>
+                    <p class="mb-0 small">
+                        {% if profile.refund_preference == 'lumina' %}
+                            Financial Aid will be deposited into your <strong>LuminaBank Checking</strong> account.
+                        {% else %}
+                            Financial Aid will be sent via direct deposit to
+                            <strong>
+                                {% if profile.preferred_external_bank %}
+                                    {{ profile.preferred_external_bank.bank_name }} ••••{{ profile.preferred_external_bank.account_number_last4 }}
+                                {% else %}
+                                    (no bank selected)
+                                {% endif %}
+                            </strong>.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

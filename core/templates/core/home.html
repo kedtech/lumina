@@ -1,0 +1,124 @@
+{% extends 'core/base.html' %}
+
+{% block title %}LuminaBank – Your Bank Account for Campus & Beyond{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-3" style="letter-spacing:-1px;">Your bank account<br>for campus <span style="color:#5eead4;">and life</span></h1>
+                <p class="lead mb-4 opacity-90">Exclusive digital checking for students at 800+ partner schools. Get financial aid the same day, earn cash rewards, and keep the account forever.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'signup' %}" class="btn btn-light btn-lg px-4 fw-bold text-teal-800">Open Free Account</a>
+                    <a href="{% url 'features' %}" class="btn btn-outline-light btn-lg px-4">See Features</a>
+                </div>
+                <div class="mt-4 d-flex gap-4 small opacity-75">
+                    <span><i class="bi bi-shield-check me-1"></i> FDIC Insured</span>
+                    <span><i class="bi bi-phone me-1"></i> Mobile-first</span>
+                    <span><i class="bi bi-zero me-1"></i> No overdraft fees</span>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <div class="bg-white bg-opacity-10 rounded-4 p-4 backdrop-blur">
+                    <div class="text-start">
+                        <div class="small opacity-75 mb-1">Available Balance</div>
+                        <div class="display-5 fw-bold mb-3">$2,847.50</div>
+                        <div class="d-flex justify-content-between small mb-2">
+                            <span>Financial Aid Refund</span>
+                            <span class="text-success">+$1,200.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-2">
+                            <span>Cash Reward</span>
+                            <span class="text-success">+$12.40</span>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span>Coffee Shop</span>
+                            <span>-$5.75</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 text-center mb-5">
+            <div class="col-md-3">
+                <div class="stat-number">800+</div>
+                <div class="text-muted">Partner Colleges</div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-number">0</div>
+                <div class="text-muted">Overdraft Fees</div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-number">55k+</div>
+                <div class="text-muted">Fee-Free ATMs</div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-number">4.9★</div>
+                <div class="text-muted">App Rating</div>
+            </div>
+        </div>
+
+        <h2 class="section-title text-center mb-2">Built for how students actually bank</h2>
+        <p class="text-center text-muted mb-5">Everything you need — nothing you don’t.</p>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-lightning-charge"></i></div>
+                    <h5 class="fw-bold">Same-day aid refunds</h5>
+                    <p class="text-muted mb-0">Receive your financial aid refund the same business day it’s released by your school. No waiting for paper checks.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-cash-coin"></i></div>
+                    <h5 class="fw-bold">Automatic cash rewards</h5>
+                    <p class="text-muted mb-0">Earn cash back at thousands of online and local merchants just by using your Lumina debit card.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                    <h5 class="fw-bold">Get paid up to 2 days early</h5>
+                    <p class="text-muted mb-0">Set up direct deposit and access your paycheck early — so your money works on your schedule.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-piggy-bank"></i></div>
+                    <h5 class="fw-bold">High-yield savings</h5>
+                    <p class="text-muted mb-0">Optional savings account earning competitive APY. Grow your money while you focus on class.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-phone"></i></div>
+                    <h5 class="fw-bold">Full mobile banking</h5>
+                    <p class="text-muted mb-0">Deposit checks, pay bills, transfer money, and lock your card instantly — all from the Lumina app.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
+                    <h5 class="fw-bold">Bank-level security</h5>
+                    <p class="text-muted mb-0">Debit card on/off switch, zero liability protection, and multi-factor authentication keep your money safe.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container text-center">
+        <h2 class="section-title mb-3">Ready to bank smarter?</h2>
+        <p class="text-muted mb-4">Join thousands of students who chose a bank account built for campus life — and beyond.</p>
+        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg px-5">Open Your Free Account</a>
+    </div>
+</section>
+{% endblock %}

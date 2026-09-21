@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% block title %}Withdraw Funds – LuminaBank{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="section-title mb-1">Withdraw Funds</h1>
+                <p class="text-muted mb-0">Transfer money from your Lumina Checking account to a linked external bank account.</p>
+            </div>
+            <a href="{% url 'link_bank' %}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Link New Bank Account
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="dashboard-card">
+                    <h5 class="fw-bold mb-3">Make a Withdrawal</h5>
+                    {% if checking %}
+                    <div class="alert alert-light border mb-4">
+                        <div class="small text-muted">Available Balance</div>
+                        <div class="fs-4 fw-bold text-primary">${{ checking.balance }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if linked_banks %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Amount (USD)</label>
+                            {{ form.amount }}
+                            {% if form.amount.errors %}<div class="text-danger small">{{ form.amount.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">To Bank Account</label>
+                            {{ form.linked_bank }}
+                            {% if form.linked_bank.errors %}<div class="text-danger small">{{ form.linked_bank.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Memo (optional)</label>
+                            {{ form.memo }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-send me-1"></i> Withdraw Funds
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-bank display-5 text-muted"></i>
+                        <p class="mt-3 text-muted">You haven’t linked any bank accounts yet.</p>
+                        <a href="{% url 'link_bank' %}" class="btn btn-primary">Link a Bank Account</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="dashboard-card">
+                    <h5 class="fw-bold mb-3">Linked Bank Accounts</h5>
+                    {% if linked_banks %}
+                    <div class="list-group list-group-flush">
+                        {% for bank in linked_banks %}
+                        <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-semibold">
+                                    {{ bank.bank_name }}
+                                    {% if bank.is_primary %}<span class="badge bg-primary ms-1">Primary</span>{% endif %}
+                                </div>
+                                <div class="small text-muted">
+                                    {{ bank.get_account_type_display }} ••••{{ bank.account_number_last4 }}
+                                    {% if bank.nickname %} · {{ bank.nickname }}{% endif %}
+                                </div>
+                            </div>
+                            <a href="{% url 'delete_linked_bank' bank.pk %}" class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Remove this linked bank account?');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted small mb-0">No linked accounts yet.</p>
+                    {% endif %}
+                </div>
+
+                <div class="dashboard-card bg-light mt-3">
+                    <h6 class="fw-bold">Withdrawal information</h6>
+                    <ul class="small text-muted mb-0">
+                        <li class="mb-2">Funds are sent via ACH to your linked bank account</li>
+                        <li class="mb-2">Typical arrival time: 1–3 business days</li>
+                        <li class="mb-2">Minimum withdrawal: $1.00</li>
+                        <li class="mb-0">Withdrawals are made from your Checking account</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

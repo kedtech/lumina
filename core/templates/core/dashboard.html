@@ -1,0 +1,185 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard – LuminaBank{% endblock %}
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="section-title mb-0">Welcome back{% if user.first_name %}, {{ user.first_name }}{% endif %}</h2>
+                <p class="text-muted small mb-0">
+                    {% if profile and profile.university %}{{ profile.university }} · {% endif %}
+                    Student Account
+                </p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'payments' %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Fund Account
+                </a>
+                <a href="{% url 'withdraw' %}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-send me-1"></i> Withdraw
+                </a>
+                <a href="{% url 'disburse_aid' %}" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-mortarboard me-1"></i> Simulate Aid
+                </a>
+                {% if not savings %}
+                <a href="{% url 'open_savings' %}" class="btn btn-outline-secondary btn-sm">Open Savings</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Refund Preference Banner -->
+        {% if profile %}
+        <div class="alert alert-light border d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div class="small">
+                <strong>Financial Aid Preference:</strong>
+                {% if profile.refund_preference == 'lumina' %}
+                    Deposit to LuminaBank Checking
+                {% else %}
+                    Direct to
+                    {% if profile.preferred_external_bank %}
+                        {{ profile.preferred_external_bank.bank_name }} ••••{{ profile.preferred_external_bank.account_number_last4 }}
+                    {% else %}
+                        External Bank (not set)
+                    {% endif %}
+                {% endif %}
+            </div>
+            <a href="{% url 'refund_preference' %}" class="btn btn-sm btn-outline-primary">Change</a>
+        </div>
+        {% endif %}
+
+        <div class="row g-4 mb-4">
+            {% if checking %}
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small">Student Checking</div>
+                            <div class="balance-display">${{ checking.balance }}</div>
+                            <div class="small text-muted mt-1">•••• {{ checking.account_number|slice:"-4:" }}</div>
+                        </div>
+                        <span class="badge" style="background:#ccfbf1;color:#0f766e;">Active</span>
+                    </div>
+                    <hr>
+                    <div class="small">
+                        <div class="d-flex justify-content-between"><span>Routing</span><span class="font-monospace">{{ checking.routing_number }}</span></div>
+                        <div class="d-flex justify-content-between"><span>Account</span><span class="font-monospace">{{ checking.account_number }}</span></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if savings %}
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small">High-Yield Savings</div>
+                            <div class="balance-display">${{ savings.balance }}</div>
+                            <div class="small text-muted mt-1">•••• {{ savings.account_number|slice:"-4:" }} · 0.75% APY</div>
+                        </div>
+                        <span class="badge" style="background:#ccfbf1;color:#0f766e;">Active</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-md-6">
+                <div class="dashboard-card border border-dashed text-center py-4">
+                    <i class="bi bi-piggy-bank display-6 text-muted"></i>
+                    <h6 class="mt-2">No Savings Account yet</h6>
+                    <p class="small text-muted">Earn 0.75% APY on balances up to $15,000</p>
+                    <a href="{% url 'open_savings' %}" class="btn btn-outline-primary btn-sm">Open Now</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if recent_aid %}
+        <div class="dashboard-card mb-4">
+            <h5 class="fw-bold mb-3">Recent Financial Aid</h5>
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th>Date</th>
+                            <th>School</th>
+                            <th>Destination</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aid in recent_aid %}
+                        <tr>
+                            <td class="small">{{ aid.created_at|date:"M d" }}</td>
+                            <td>{{ aid.school_name }}{% if aid.term %} <span class="text-muted">({{ aid.term }})</span>{% endif %}</td>
+                            <td>
+                                {% if aid.destination == 'lumina' %}
+                                    <span class="badge bg-success">LuminaBank</span>
+                                {% else %}
+                                    <span class="badge bg-info text-dark">External</span>
+                                    {% if aid.external_bank %} ••••{{ aid.external_bank.account_number_last4 }}{% endif %}
+                                {% endif %}
+                            </td>
+                            <td class="text-end fw-semibold text-success">+${{ aid.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if linked_banks %}
+        <div class="dashboard-card mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Linked Bank Accounts</h5>
+                <a href="{% url 'withdraw' %}" class="btn btn-sm btn-outline-primary">Manage</a>
+            </div>
+            <div class="row g-2">
+                {% for bank in linked_banks %}
+                <div class="col-md-4">
+                    <div class="border rounded p-3 small">
+                        <div class="fw-semibold">{{ bank.bank_name }}
+                            {% if bank.is_primary %}<span class="badge bg-primary">Primary</span>{% endif %}
+                        </div>
+                        <div class="text-muted">••••{{ bank.account_number_last4 }} · {{ bank.get_account_type_display }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="dashboard-card">
+            <h5 class="fw-bold mb-3">Recent Activity</h5>
+            {% if recent_transactions %}
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead>
+                        <tr class="text-muted small">
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in recent_transactions %}
+                        <tr>
+                            <td class="small">{{ t.created_at|date:"M d" }}</td>
+                            <td>{{ t.description }}</td>
+                            <td><span class="badge bg-light text-dark">{{ t.get_transaction_type_display }}</span></td>
+                            <td class="text-end fw-semibold {% if t.transaction_type == 'withdrawal' %}text-danger{% elif t.transaction_type in 'deposit,reward,aid,interest' %}text-success{% else %}text-dark{% endif %}">
+                                {% if t.transaction_type == 'withdrawal' %}-{% elif t.transaction_type in 'deposit,reward,aid,interest' %}+{% endif %}${{ t.amount }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">No transactions yet. Fund your account or simulate Financial Aid to get started!</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
